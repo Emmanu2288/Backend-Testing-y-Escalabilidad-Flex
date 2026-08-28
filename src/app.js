@@ -3,6 +3,7 @@ import { config } from "./config/index.js";
 import productsRoutes from "./routes/products.routes.js";
 import usersRoutes from "./routes/users.routes.js";
 import mongoose from "mongoose";
+import mocksRoutes from "./routes/mocks.routes.js";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.get("/health", (req, res) => {
 
 app.use("/api/products", productsRoutes);
 app.use("/api/users", usersRoutes);
+app.use("/api/mocks", mocksRoutes);
 
 mongoose.connect(config.mongoUri)
     .then(() => console.log("Conectado a la base de datos"))

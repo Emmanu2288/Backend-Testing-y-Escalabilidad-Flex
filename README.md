@@ -19,7 +19,7 @@ API de logística construida como proyecto de práctica para el curso de Program
    ```
    npm run dev
    ```
-5. La API queda disponible en `http://localhost:8080/api`, con los endpoints de `/products` y `/users`.
+5. La API queda disponible en `http://localhost:8080/api`, con los endpoints de `/products`, `/users` y `/mocks`.
 
 Si falta alguna variable de entorno crítica (como `MONGODB_URI`), el servidor no arranca y muestra un error descriptivo en la consola.
 
@@ -46,3 +46,38 @@ Las variables de entorno se centralizan en `src/config/index.js`, que valida al 
 ## Constantes de dominio
 
 Los valores fijos del negocio (roles de usuario, estados de producto) están centralizados en `src/constants/index.js` como objetos `Object.freeze`, para evitar strings sueltos repetidos por el código y reducir errores de tipeo.
+
+## Mocking y datos de prueba
+
+El proyecto incluye un router de mocking (`/api/mocks`) para generar datos de prueba sin depender de información cargada a mano. Sigue la misma arquitectura por capas que el resto de la API: los generadores viven en `src/mocks/` (funciones puras, sin tocar la base de datos), `mocksService` los orquesta, y el Controller/Router exponen los endpoints.
+
+Los datos falsos se generan con [Faker](https://fakerjs.dev/) (nombres, emails y productos realistas) para que cada dato sea distinto en cada ejecución.
+
+### Endpoints disponibles
+
+**`GET /api/mocks/mockingusers?count=N`**
+Devuelve `N` usuarios falsos (por defecto 10 si no se especifica `count`) **sin guardarlos en la base de datos**. Sirve para ver rápidamente cómo se verían los datos, sin efectos secundarios.
+
+**`GET /api/mocks/mockingproducts?count=N`**
+Igual que el anterior, pero para productos.
+
+**`POST /api/mocks/generateData`**
+Genera e **inserta** en MongoDB la cantidad de usuarios y productos indicada en el body:
+```json
+{
+  "users": 10,
+  "products": 10
+}
+```
+Cada usuario mock se crea a través de `usersService.createUser`, por lo que pasa por las mismas validaciones y el mismo hasheo de contraseña (con `bcrypt`) que un usuario real. Responde con la cantidad de registros creados, por ejemplo:
+```json
+{
+  "usersCreated": 10,
+  "productsCreated": 10
+}
+```
+Si `users` y `products` no son números, son negativos, o ambos son `0`, la API responde `400` con un mensaje descriptivo.
+
+### Cómo probarlo
+
+Con el servidor corriendo (`npm run dev`), probar los tres endpoints desde Postman (o cualquier cliente HTTP) apuntando a `http://localhost:8080/api/mocks/...`. Para limpiar los datos de prueba generados, se pueden eliminar los documentos directamente desde MongoDB Compass, en las colecciones `users` y `products` de la base `shipnow`.

@@ -1,11 +1,14 @@
 import {usersRepository} from "../repositories/users.repository.js";
+import bcrypt from 'bcrypt'
 
 export const usersService = {
     createUser: async (userData) => {
   if (!userData.email.includes('@')) {
     throw new Error('Email inválido');
   }
-  return await usersRepository.create(userData);
+  const hashedPassword = await bcrypt.hash(userData.password, 10)
+  const userToCreate = { ...userData, password: hashedPassword }
+  return await usersRepository.create(userToCreate);
 },
 
     updateUser: async (id, userData) => {
