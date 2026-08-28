@@ -128,7 +128,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Juan Pérez\",\r\n  \"email\": \"juan@example.com\",\r\n  \"password\": \"123456\"\r\n}",
+              "raw": "{\r\n  \"name\": \"Pepe Pérez\",\r\n  \"email\": \"pepe@example.com\",\r\n  \"password\": \"12345678\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -189,7 +189,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Juancito el Pérez\",\r\n}",
+              "raw": "{\r\n  \"name\": \"Juancito Pérez\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -210,12 +210,99 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "5. Eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/6a89aca6fed6a6b7ed59f425",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "6a89aca6fed6a6b7ed59f425"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mocks",
+      "item": [
+        {
+          "name": "1. Obtener usuarios falsos",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "{{baseUrl}}/mocks/mockingusers?count=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "mocks",
+                "mockingusers"
+              ],
+              "query": [
+                {
+                  "key": "count",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Obtener productos falsos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/mocks/mockingproducts?count=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "mocks",
+                "mockingproducts"
+              ],
+              "query": [
+                {
+                  "key": "count",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Generar datos de prueba",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"users\": 10,\r\n  \"products\": 10\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mocks/generateData",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "mocks",
+                "generateData"
+              ]
             }
           },
           "response": []
