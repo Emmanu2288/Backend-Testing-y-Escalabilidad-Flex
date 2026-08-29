@@ -90,6 +90,47 @@ Con el servidor corriendo, algunos casos para probar:
 - `POST /api/deliveries` con un `repartidor` que en realidad tiene rol `cliente` → `400 INVALID_DRIVER_ROLE`
 - Cualquier ruta que no exista, por ejemplo `GET /api/ruta-inexistente` → `404 ROUTE_NOT_FOUND`
 
+## Testing
+
+La API tiene una suite de tests funcionales automatizados con **Mocha** (organiza y ejecuta), **Chai** (aserciones) y **Supertest** (peticiones HTTP contra la app, sin necesidad de abrir un puerto real).
+
+### Por qué `app.js` y `server.js` están separados
+
+`src/app.js` exporta la app de Express configurada (rutas, middlewares, manejo de errores), sin llamar a `app.listen(...)`. `src/server.js` es el punto de entrada real: importa `app`, conecta a MongoDB y recién ahí levanta el servidor. Esta separación es la que le permite a Supertest importar `app` directamente en los tests, sin depender de que haya un servidor real corriendo en un puerto.
+
+### Entorno de testing separado
+
+Los tests usan variables de entorno propias, cargadas desde un archivo `.env.test` (no se sube al repositorio, igual que `.env` — ver `.env.test.example` como referencia):
+```
+PORT=8081
+MONGODB_URI=mongodb://localhost:27017/shipnow-test
+NODE_ENV=test
+```
+La base de datos (`shipnow-test`) es **distinta** a la de desarrollo (`shipnow`), para que correr los tests nunca modifique datos reales. Mongo crea la base sola la primera vez que un test escribe en ella.
+
+### Cómo ejecutar los tests
+
+```
+npm test
+```
+
+Esto corre `mocha` sobre todos los archivos `tests/**/*.test.js`, precargando `tests/setup.js` (que carga `.env.test` y conecta/desconecta MongoDB una sola vez para toda la suite).
+
+### Qué está cubierto
+
+- **`tests/users.test.js`**: crear usuario (éxito), email inválido (400), listar usuarios.
+- **`tests/orders.test.js`**: crear pedido con total calculado (éxito), cliente inexistente (404), pedido sin items (400), obtener por ID (éxito y 404), actualizar estado, listar.
+- **`tests/deliveries.test.js`**: crear entrega (éxito), repartidor con rol incorrecto (400), pedido inexistente (404), listar, entrega inexistente (404).
+- **`tests/mocks.test.js`**: generar datos falsos sin guardarlos (éxito), cantidad inválida (400), generar e insertar en MongoDB (éxito).
+- **`tests/logger.test.js`**: endpoint `/api/loggerTest` (éxito) y ruta inexistente (404, coherente con el middleware de errores).
+- **`tests/docs.test.js`**: la ruta de Swagger (`/api/docs`) responde.
+
+Cada test valida el `status` HTTP **y** la estructura del body (propiedades esperadas, valores calculados, código de error interno), no solo que la ruta "responda algo".
+
+### Datos de prueba y limpieza
+
+Los datos que necesita cada grupo de tests (usuarios, pedidos) se crean dentro del propio test, con emails identificables (`test-...@mail.com`) para poder limpiarlos después con `afterEach`/`after`, sin depender de datos cargados manualmente. Los mocks generados por `generateData` usan el dominio `@test.com`, y también se limpian automáticamente.
+
 ## Documentación interactiva (Swagger)
 
 La API está documentada con **OpenAPI 3.0**, usando `swagger-jsdoc` (arma la especificación) y `swagger-ui-express` (la muestra en una interfaz web interactiva).

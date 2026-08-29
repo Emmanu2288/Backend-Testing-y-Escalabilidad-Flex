@@ -10,6 +10,10 @@ export const ordersService = {
             throw new AppError('USER_NOT_FOUND')
         }
 
+        if (!Array.isArray(orderData.items) || orderData.items.length === 0) {
+            throw new AppError('VALIDATION_ERROR', 'El pedido debe incluir al menos un item')
+        }
+
         const total = orderData.items.reduce((acc, item) => acc + item.cantidad * item.precio, 0)
         const pedidoCompleto = { ...orderData, total }
 

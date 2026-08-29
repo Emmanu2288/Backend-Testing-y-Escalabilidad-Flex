@@ -1,14 +1,11 @@
 import express from "express";
-import { config } from "./config/index.js";
 import productsRoutes from "./routes/products.routes.js";
 import usersRoutes from "./routes/users.routes.js";
-import mongoose from "mongoose";
 import mocksRoutes from "./routes/mocks.routes.js";
 import ordersRoutes from './routes/orders.routes.js'
 import deliveriesRoutes from './routes/deliveries.routes.js'
 import { routeNotFound } from './middlewares/routeNotFound.js'
 import { errorHandler } from './middlewares/errorHandler.js'
-import logger from './utils/logger.js'
 import loggerTestRoutes from './routes/logger.routes.js'
 import swaggerUi from 'swagger-ui-express'
 import { swaggerSpecs } from './docs/swagger.config.js'
@@ -34,12 +31,5 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs))
 app.use(routeNotFound)
 app.use(errorHandler)
 
-mongoose.connect(config.mongoUri)
-    .then(() => logger.info("Conectado a la base de datos"))
-    .catch((error) => logger.fatal(`Error al conectar a la base de datos: ${error}`));
-
-app.listen(config.port, () => {
-    logger.info(`Servidor escuchando en el puerto ${config.port}`)
-})
-
+export default app
 
