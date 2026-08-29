@@ -1,0 +1,153 @@
+paths:
+  /api/mocks/mockingusers:
+    get:
+      summary: Generar usuarios falsos (sin guardar)
+      description: Devuelve datos simulados de usuarios usando Faker, sin insertarlos en MongoDB. Herramienta de desarrollo, no representa una funcionalidad de negocio.
+      tags:
+        - Mocks
+      parameters:
+        - name: count
+          in: query
+          required: false
+          description: Cantidad de usuarios falsos a generar (por defecto 10)
+          schema:
+            type: integer
+            example: 5
+      responses:
+        "200":
+          description: Usuarios simulados generados correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usuario'
+
+  /api/mocks/mockingproducts:
+    get:
+      summary: Generar productos falsos (sin guardar)
+      description: Devuelve datos simulados de productos usando Faker, sin insertarlos en MongoDB.
+      tags:
+        - Mocks
+      parameters:
+        - name: count
+          in: query
+          required: false
+          description: Cantidad de productos falsos a generar (por defecto 10)
+          schema:
+            type: integer
+            example: 5
+      responses:
+        "200":
+          description: Productos simulados generados correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Producto'
+
+  /api/mocks/mockingorders:
+    get:
+      summary: Generar pedidos falsos (sin guardar)
+      description: Devuelve datos simulados de pedidos, sin insertarlos en MongoDB. El campo "cliente" es un id con formato válido pero inventado, ya que no se guarda ninguna relación real.
+      tags:
+        - Mocks
+      parameters:
+        - name: count
+          in: query
+          required: false
+          description: Cantidad de pedidos falsos a generar (por defecto 10)
+          schema:
+            type: integer
+            example: 5
+      responses:
+        "200":
+          description: Pedidos simulados generados correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pedido'
+
+  /api/mocks/mockingdeliveries:
+    get:
+      summary: Generar entregas falsas (sin guardar)
+      description: Devuelve datos simulados de entregas, sin insertarlos en MongoDB. "pedido" y "repartidor" son ids con formato válido pero inventados.
+      tags:
+        - Mocks
+      parameters:
+        - name: count
+          in: query
+          required: false
+          description: Cantidad de entregas falsas a generar (por defecto 10)
+          schema:
+            type: integer
+            example: 5
+      responses:
+        "200":
+          description: Entregas simuladas generadas correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entrega'
+
+  /api/mocks/generateData:
+    post:
+      summary: Generar e insertar datos de prueba en MongoDB
+      description: >
+        Genera usuarios, productos, pedidos y entregas respetando sus relaciones (1 de cada 3
+        usuarios se genera con rol repartidor, el resto cliente; los pedidos se asignan a
+        clientes reales ya creados; las entregas se asignan a pedidos y repartidores reales
+        ya creados). Cada registro pasa por su Service correspondiente, aplicando las mismas
+        validaciones que un dato real.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: number
+                  example: 10
+                products:
+                  type: number
+                  example: 10
+                orders:
+                  type: number
+                  example: 5
+                deliveries:
+                  type: number
+                  example: 3
+      responses:
+        "201":
+          description: Datos de prueba generados e insertados correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usersCreated:
+                    type: number
+                    example: 10
+                  productsCreated:
+                    type: number
+                    example: 10
+                  ordersCreated:
+                    type: number
+                    example: 5
+                  deliveriesCreated:
+                    type: number
+                    example: 3
+        "400":
+          description: Cantidades inválidas (no numéricas, negativas, todas en cero, o pedidos/entregas sin usuarios/repartidores disponibles)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

@@ -90,6 +90,30 @@ Con el servidor corriendo, algunos casos para probar:
 - `POST /api/deliveries` con un `repartidor` que en realidad tiene rol `cliente` → `400 INVALID_DRIVER_ROLE`
 - Cualquier ruta que no exista, por ejemplo `GET /api/ruta-inexistente` → `404 ROUTE_NOT_FOUND`
 
+## Documentación interactiva (Swagger)
+
+La API está documentada con **OpenAPI 3.0**, usando `swagger-jsdoc` (arma la especificación) y `swagger-ui-express` (la muestra en una interfaz web interactiva).
+
+Con el servidor corriendo, la documentación está disponible en:
+```
+http://localhost:8080/api/docs
+```
+
+Desde ahí se puede ver cada endpoint agrupado por módulo, y **probarlo directamente** desde el navegador (botón "Try it out"), sin necesidad de Postman.
+
+### Qué está documentado
+
+La configuración vive separada de las rutas, en `src/docs/`:
+- `swagger.config.js`: configuración general (info de la API, servidor, dónde buscar la documentación).
+- `schemas.yaml`: schemas reutilizables — `Usuario`, `Producto`, `Pedido`, `ItemPedido`, `Entrega`, `ErrorResponse`, `MessageResponse`.
+- `users.yaml`, `products.yaml`, `orders.yaml`, `deliveries.yaml`: los 5 endpoints CRUD de cada entidad, agrupados con el tag correspondiente (`Users`, `Products`, `Orders`, `Deliveries`).
+- `mocks.yaml`: los 5 endpoints del módulo de mocking, aclarando cuáles no guardan datos (`mockingusers`, `mockingproducts`, `mockingorders`, `mockingdeliveries`) y cuál sí inserta en MongoDB (`generateData`).
+- `logger.yaml`: el endpoint `/api/loggerTest`, aclarando que es una herramienta de diagnóstico y no una funcionalidad de negocio.
+
+Cada endpoint documenta método HTTP, ruta, descripción, parámetros (de ruta o query), el body esperado (cuando aplica), la respuesta exitosa y las respuestas de error posibles — usando los mismos códigos de error reales del proyecto (`USER_NOT_FOUND`, `PRODUCT_NOT_FOUND`, `ORDER_NOT_FOUND`, `DELIVERY_NOT_FOUND`, `INVALID_DRIVER_ROLE`, `VALIDATION_ERROR`, `INVALID_MOCK_AMOUNT`).
+
+La documentación refleja el comportamiento real de la API: los nombres de campo son los mismos que usa el proyecto (`nombre`, `email`, `rol`, `precio`, `cliente`, `repartidor`, etc.), no una versión traducida o simplificada.
+
 ## Logging
 
 La API usa **[Winston](https://github.com/winstonjs/winston)** como logger centralizado, configurado en `src/utils/logger.js` y reutilizado en todo el proyecto (nunca se usa `console.log` directamente para eventos de la aplicación).

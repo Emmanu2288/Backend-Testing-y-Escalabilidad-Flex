@@ -1,0 +1,150 @@
+paths:
+  /api/deliveries:
+    post:
+      summary: Crear una entrega
+      description: Valida que el pedido exista, que el repartidor exista y que tenga efectivamente rol de repartidor.
+      tags:
+        - Deliveries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pedido
+                - repartidor
+              properties:
+                pedido:
+                  type: string
+                  example: 66a1234567890abcdef12345
+                repartidor:
+                  type: string
+                  description: ID de un usuario con rol repartidor
+                  example: 66a1234567890abcdef12399
+                prioridad:
+                  type: string
+                  enum: [baja, normal, alta]
+                  example: normal
+      responses:
+        "201":
+          description: Entrega creada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entrega'
+        "400":
+          description: El usuario indicado no tiene rol de repartidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "404":
+          description: El pedido o el repartidor indicado no existen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Obtener todas las entregas
+      tags:
+        - Deliveries
+      responses:
+        "200":
+          description: Lista de entregas obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entrega'
+
+  /api/deliveries/{id}:
+    get:
+      summary: Obtener una entrega por ID
+      tags:
+        - Deliveries
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 66a1234567890abcdef12345
+      responses:
+        "200":
+          description: Entrega obtenida correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entrega'
+        "404":
+          description: Entrega no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Actualizar una entrega por ID
+      description: Se usa, por ejemplo, para cambiar el estado (asignada, en_transito, entregada, cancelada) o la prioridad.
+      tags:
+        - Deliveries
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 66a1234567890abcdef12345
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                estado:
+                  type: string
+                  enum: [asignada, en_transito, entregada, cancelada]
+                  example: en_transito
+                prioridad:
+                  type: string
+                  enum: [baja, normal, alta]
+                  example: alta
+      responses:
+        "200":
+          description: Entrega actualizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entrega'
+        "404":
+          description: Entrega no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Eliminar una entrega por ID
+      tags:
+        - Deliveries
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 66a1234567890abcdef12345
+      responses:
+        "200":
+          description: Entrega eliminada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        "404":
+          description: Entrega no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

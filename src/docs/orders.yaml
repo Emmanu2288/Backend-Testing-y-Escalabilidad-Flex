@@ -1,0 +1,137 @@
+paths:
+  /api/orders:
+    post:
+      summary: Crear un pedido
+      description: El total se calcula en el Service a partir de los items enviados, no se recibe directamente del cliente.
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cliente
+                - items
+              properties:
+                cliente:
+                  type: string
+                  description: ID de un usuario con rol cliente
+                  example: 66a1234567890abcdef12300
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ItemPedido'
+      responses:
+        "201":
+          description: Pedido creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pedido'
+        "404":
+          description: El cliente indicado no existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Obtener todos los pedidos
+      tags:
+        - Orders
+      responses:
+        "200":
+          description: Lista de pedidos obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pedido'
+
+  /api/orders/{id}:
+    get:
+      summary: Obtener un pedido por ID
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 66a1234567890abcdef12345
+      responses:
+        "200":
+          description: Pedido obtenido correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pedido'
+        "404":
+          description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Actualizar un pedido por ID
+      description: Se usa, por ejemplo, para cambiar el estado del pedido (creado, asignado, retirado, en_transito, entregado, cancelado).
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 66a1234567890abcdef12345
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                estado:
+                  type: string
+                  enum: [creado, asignado, retirado, en_transito, entregado, cancelado]
+                  example: asignado
+      responses:
+        "200":
+          description: Pedido actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pedido'
+        "404":
+          description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Eliminar un pedido por ID
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 66a1234567890abcdef12345
+      responses:
+        "200":
+          description: Pedido eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        "404":
+          description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

@@ -1,0 +1,120 @@
+components:
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 66a1234567890abcdef12345
+        nombre:
+          type: string
+          example: Juan Pérez
+        email:
+          type: string
+          example: juan@example.com
+        rol:
+          type: string
+          enum: [admin, cliente, repartidor]
+          example: cliente
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        error:
+          type: string
+          example: USER_NOT_FOUND
+        message:
+          type: string
+          example: El usuario solicitado no existe
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Usuario eliminado correctamente
+
+    Producto:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 66a1234567890abcdef12345
+        nombre:
+          type: string
+          example: Zapatillas running
+        descripcion:
+          type: string
+          example: Zapatillas para correr, talle 42
+        precio:
+          type: number
+          example: 15000
+        estado:
+          type: string
+          enum: [disponible, sin_stock]
+          example: disponible
+        stock:
+          type: number
+          example: 10
+
+    ItemPedido:
+      type: object
+      properties:
+        nombre:
+          type: string
+          example: Caja mediana
+        cantidad:
+          type: number
+          example: 2
+        precio:
+          type: number
+          example: 1500
+
+    Pedido:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 66a1234567890abcdef12345
+        cliente:
+          type: string
+          description: ID del usuario (con rol cliente) dueño del pedido
+          example: 66a1234567890abcdef12300
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemPedido'
+        total:
+          type: number
+          description: Se calcula en el Service a partir de los items, no se recibe del cliente
+          example: 3000
+        estado:
+          type: string
+          enum: [creado, asignado, retirado, en_transito, entregado, cancelado]
+          example: creado
+
+    Entrega:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 66a1234567890abcdef12345
+        pedido:
+          type: string
+          description: ID del pedido asociado
+          example: 66a1234567890abcdef12345
+        repartidor:
+          type: string
+          description: ID del usuario con rol repartidor asignado
+          example: 66a1234567890abcdef12399
+        estado:
+          type: string
+          enum: [asignada, en_transito, entregada, cancelada]
+          example: asignada
+        prioridad:
+          type: string
+          enum: [baja, normal, alta]
+          example: normal
