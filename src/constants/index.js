@@ -30,3 +30,9 @@ export const PRIORIDAD_ENTREGA = Object.freeze({
     NORMAL: 'normal',
     ALTA: 'alta'
 })
+
+export const DOCUMENT_TYPES = Object.freeze({
+    USER_DOCUMENT: 'documento_usuario',
+    DRIVER_LICENSE: 'licencia_repartidor',
+    DELIVERY_PROOF: 'comprobante_entrega'
+})

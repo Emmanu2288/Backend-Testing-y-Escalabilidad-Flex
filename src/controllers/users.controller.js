@@ -44,3 +44,15 @@ export const deleteUser = async (req, res, next) => {
         next(error)
     }
 }
+
+export const uploadUserDocument = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const { type } = req.body
+        const file = req.file
+        const updatedUser = await usersService.addDocument(id, file, type)
+        res.status(200).json(updatedUser)
+    } catch (error) {
+        next(error)
+    }
+}

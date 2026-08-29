@@ -44,3 +44,14 @@ export const deleteOrder = async (req, res, next) => {
         next(error)
     }
 }
+
+export const uploadOrderProof = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const file = req.file
+        const updatedOrder = await ordersService.addProof(id, file)
+        res.status(200).json(updatedOrder)
+    } catch (error) {
+        next(error)
+    }
+}

@@ -31,6 +31,26 @@ export const ERRORS = {
     statusCode: 404,
     message: 'La ruta solicitada no existe'
   },
+  FILE_REQUIRED: {
+    statusCode: 400,
+    message: 'Debe adjuntar un archivo'
+  },
+  INVALID_FILE_TYPE: {
+    statusCode: 400,
+    message: 'El tipo de archivo no está permitido'
+  },
+  FILE_TOO_LARGE: {
+    statusCode: 400,
+    message: 'El archivo supera el tamaño máximo permitido (5MB)'
+  },
+  INVALID_DOCUMENT_TYPE: {
+    statusCode: 400,
+    message: 'El tipo de documento indicado no es válido'
+  },
+  UPLOAD_ERROR: {
+    statusCode: 500,
+    message: 'Ocurrió un error al guardar el archivo'
+  },
   INTERNAL_SERVER_ERROR: {
     statusCode: 500,
     message: 'Ocurrió un error interno en el servidor'

@@ -16,6 +16,58 @@ components:
           type: string
           enum: [admin, cliente, repartidor]
           example: cliente
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Documento'
+
+    Documento:
+      type: object
+      properties:
+        originalName:
+          type: string
+          example: dni.pdf
+        fileName:
+          type: string
+          example: 1717601111111-987654321.pdf
+        path:
+          type: string
+          example: uploads/documents/1717601111111-987654321.pdf
+        mimeType:
+          type: string
+          example: application/pdf
+        size:
+          type: number
+          example: 24533
+        type:
+          type: string
+          enum: [documento_usuario, licencia_repartidor, comprobante_entrega]
+          example: documento_usuario
+        uploadedAt:
+          type: string
+          format: date-time
+
+    Comprobante:
+      type: object
+      properties:
+        originalName:
+          type: string
+          example: comprobante.pdf
+        fileName:
+          type: string
+          example: 1717601111111-123456789.pdf
+        path:
+          type: string
+          example: uploads/proofs/1717601111111-123456789.pdf
+        mimeType:
+          type: string
+          example: application/pdf
+        size:
+          type: number
+          example: 18211
+        uploadedAt:
+          type: string
+          format: date-time
 
     ErrorResponse:
       type: object
@@ -95,6 +147,8 @@ components:
           type: string
           enum: [creado, asignado, retirado, en_transito, entregado, cancelado]
           example: creado
+        proof:
+          $ref: '#/components/schemas/Comprobante'
 
     Entrega:
       type: object

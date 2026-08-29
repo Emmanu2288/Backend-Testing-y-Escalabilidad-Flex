@@ -3,3 +3,9 @@ node_modules
 .env.test
 logs/
 *.log
+uploads/documents/*
+uploads/proofs/*
+uploads/licenses/*
+!uploads/documents/.gitkeep
+!uploads/proofs/.gitkeep
+!uploads/licenses/.gitkeep

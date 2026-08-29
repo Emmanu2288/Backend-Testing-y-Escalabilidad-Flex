@@ -90,6 +90,30 @@ Con el servidor corriendo, algunos casos para probar:
 - `POST /api/deliveries` con un `repartidor` que en realidad tiene rol `cliente` → `400 INVALID_DRIVER_ROLE`
 - Cualquier ruta que no exista, por ejemplo `GET /api/ruta-inexistente` → `404 ROUTE_NOT_FOUND`
 
+## Carga de archivos (Multer)
+
+La API acepta documentos y comprobantes vía `multipart/form-data`, usando **Multer**, configurado de forma centralizada en `src/middlewares/upload.middleware.js` (separado de rutas y controllers).
+
+### Configuración
+
+- **Almacenamiento**: `diskStorage`, con la carpeta de destino decidida según el campo del archivo (`document` → `uploads/documents`, `proof` → `uploads/proofs`, `license` → `uploads/licenses`). El nombre del archivo se genera único (`timestamp-random.extension`), nunca se usa el nombre original como nombre final.
+- **Tipos permitidos**: `application/pdf`, `image/jpeg`, `image/png`, `image/webp`.
+- **Tamaño máximo**: 5MB.
+- La carpeta `uploads/` está en `.gitignore` (excepto los `.gitkeep` que mantienen la estructura de subcarpetas) — los archivos subidos nunca se suben al repositorio, y en MongoDB solo se guardan sus **metadatos** (nombre original, nombre generado, ruta, tipo MIME, tamaño, tipo de documento y fecha), nunca el archivo en sí.
+
+### Endpoints
+
+**`POST /api/users/{id}/documents`** — sube un documento asociado a un usuario. Body `multipart/form-data` con:
+- `document` (archivo, requerido)
+- `type` (texto, requerido) — uno de `documento_usuario`, `licencia_repartidor`, `comprobante_entrega`
+
+**`POST /api/orders/{id}/proof`** — sube un comprobante de entrega asociado a un pedido. Body `multipart/form-data` con:
+- `proof` (archivo, requerido)
+
+Ambos endpoints validan que la entidad exista, que el archivo haya llegado, el tipo de archivo y (para documentos de usuario) el tipo de documento, respondiendo siempre con el formato de error centralizado del proyecto (`FILE_REQUIRED`, `INVALID_FILE_TYPE`, `FILE_TOO_LARGE`, `INVALID_DOCUMENT_TYPE`, `USER_NOT_FOUND`/`ORDER_NOT_FOUND`). Si la validación de negocio falla después de que Multer ya guardó el archivo en disco, el Service borra ese archivo antes de responder, para no dejar archivos huérfanos en el servidor.
+
+Documentados en Swagger (`/api/docs`, tags Users y Orders) como `multipart/form-data`, y cubiertos por tests funcionales en `tests/uploads.test.js` (carga exitosa, archivo faltante, tipo de archivo inválido, tipo de documento inválido, entidad inexistente).
+
 ## Testing
 
 La API tiene una suite de tests funcionales automatizados con **Mocha** (organiza y ejecuta), **Chai** (aserciones) y **Supertest** (peticiones HTTP contra la app, sin necesidad de abrir un puerto real).
@@ -124,6 +148,7 @@ Esto corre `mocha` sobre todos los archivos `tests/**/*.test.js`, precargando `t
 - **`tests/mocks.test.js`**: generar datos falsos sin guardarlos (éxito), cantidad inválida (400), generar e insertar en MongoDB (éxito).
 - **`tests/logger.test.js`**: endpoint `/api/loggerTest` (éxito) y ruta inexistente (404, coherente con el middleware de errores).
 - **`tests/docs.test.js`**: la ruta de Swagger (`/api/docs`) responde.
+- **`tests/uploads.test.js`**: carga de documento de usuario (éxito, archivo faltante, tipo de documento inválido, tipo de archivo inválido, usuario inexistente) y carga de comprobante de pedido (éxito, pedido inexistente). Usa archivos reales de `tests/fixtures/` con `.attach()` de Supertest, y borra los archivos que efectivamente sube al terminar.
 
 Cada test valida el `status` HTTP **y** la estructura del body (propiedades esperadas, valores calculados, código de error interno), no solo que la ruta "responda algo".
 

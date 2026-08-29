@@ -25,6 +25,14 @@ const orderSchema = new mongoose.Schema({
         type: String,
         enum: Object.values(ESTADOS_PEDIDO),
         default: ESTADOS_PEDIDO.CREADO
+    },
+    proof: {
+        originalName: String,
+        fileName: String,
+        path: String,
+        mimeType: String,
+        size: Number,
+        uploadedAt: Date
     }
 })
 

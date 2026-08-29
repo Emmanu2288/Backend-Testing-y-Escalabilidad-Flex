@@ -135,3 +135,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+
+  /api/orders/{id}/proof:
+    post:
+      summary: Subir un comprobante de entrega para un pedido
+      description: Recibe un archivo y lo asocia al pedido indicado como comprobante. Solo se guardan los metadatos del archivo en la base de datos; el archivo en sí queda en el servidor, dentro de uploads/proofs.
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del pedido
+          schema:
+            type: string
+            example: 66a1234567890abcdef12345
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - proof
+              properties:
+                proof:
+                  type: string
+                  format: binary
+                  description: Archivo del comprobante. Tipos permitidos - application/pdf, image/jpeg, image/png, image/webp. Tamaño máximo - 5MB.
+      responses:
+        "200":
+          description: Comprobante cargado y asociado al pedido correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pedido'
+        "400":
+          description: Falta el archivo (FILE_REQUIRED), el tipo de archivo no está permitido (INVALID_FILE_TYPE) o supera el tamaño máximo (FILE_TOO_LARGE)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "404":
+          description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
