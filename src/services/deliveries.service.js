@@ -8,12 +8,12 @@ export const deliveriesService = {
     createDelivery: async (deliveryData) => {
         const order = await ordersRepository.findById(deliveryData.pedido)
         if (!order) {
-            throw new AppError('ORDER_NOT_FOUND')
+            throw new AppError('ORDER_NOT_FOUND', 'El pedido indicado no existe')
         }
         
         const repartidor = await usersRepository.findById(deliveryData.repartidor)
         if (!repartidor) {
-            throw new AppError('USER_NOT_FOUND')
+            throw new AppError('USER_NOT_FOUND', 'El repartidor indicado no existe')
         }
 
         const rol = repartidor.rol

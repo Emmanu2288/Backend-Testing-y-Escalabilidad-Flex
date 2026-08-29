@@ -8,6 +8,8 @@ import ordersRoutes from './routes/orders.routes.js'
 import deliveriesRoutes from './routes/deliveries.routes.js'
 import { routeNotFound } from './middlewares/routeNotFound.js'
 import { errorHandler } from './middlewares/errorHandler.js'
+import logger from './utils/logger.js'
+import loggerTestRoutes from './routes/logger.routes.js'
 
 const app = express();
 
@@ -24,16 +26,17 @@ app.use("/api/users", usersRoutes);
 app.use('/api/orders', ordersRoutes)
 app.use('/api/deliveries', deliveriesRoutes)
 app.use("/api/mocks", mocksRoutes);
+app.use('/api/loggerTest', loggerTestRoutes)
 
 app.use(routeNotFound)
 app.use(errorHandler)
 
 mongoose.connect(config.mongoUri)
-    .then(() => console.log("Conectado a la base de datos"))
-    .catch((error) => console.error(`Error al conectar a la base de datos: ${error}`));
+    .then(() => logger.info("Conectado a la base de datos"))
+    .catch((error) => logger.fatal(`Error al conectar a la base de datos: ${error}`));
 
 app.listen(config.port, () => {
-    console.log (`Servidor escuchando en el puerto ${config.port}`)
+    logger.info(`Servidor escuchando en el puerto ${config.port}`)
 })
 
 

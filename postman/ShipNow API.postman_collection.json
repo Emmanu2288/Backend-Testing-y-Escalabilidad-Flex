@@ -699,6 +699,29 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Logger",
+			"item": [
+				{
+					"name": "1. Probar todos los niveles del logger",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/loggerTest",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"loggerTest"
+							]
+						},
+						"description": "Dispara los 6 niveles (debug, http, info, warning, error, fatal). Ver la consola del servidor y logs/errors-FECHA.log (solo debe tener error y fatal)."
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

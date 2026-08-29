@@ -90,6 +90,35 @@ Con el servidor corriendo, algunos casos para probar:
 - `POST /api/deliveries` con un `repartidor` que en realidad tiene rol `cliente` → `400 INVALID_DRIVER_ROLE`
 - Cualquier ruta que no exista, por ejemplo `GET /api/ruta-inexistente` → `404 ROUTE_NOT_FOUND`
 
+## Logging
+
+La API usa **[Winston](https://github.com/winstonjs/winston)** como logger centralizado, configurado en `src/utils/logger.js` y reutilizado en todo el proyecto (nunca se usa `console.log` directamente para eventos de la aplicación).
+
+### Niveles de log
+
+De más grave a menos grave: `fatal`, `error`, `warning`, `info`, `http`, `debug`.
+
+- **`debug`**: detalle técnico, solo útil durante el desarrollo.
+- **`http`**: registro de peticiones.
+- **`info`**: eventos normales importantes (servidor iniciado, pedido creado, mocks generados).
+- **`warning`**: errores esperados del negocio (recurso no encontrado, validación fallida) — se usan en el middleware global de errores para todo lo que responde con status `< 500`.
+- **`error`**: fallas operativas — errores inesperados del servidor (status `>= 500`).
+- **`fatal`**: problemas críticos, como no poder conectar a MongoDB al arrancar.
+
+### Comportamiento por entorno
+
+Controlado por `NODE_ENV` (ya validado en `src/config/index.js`):
+- **Desarrollo**: se muestran todos los niveles, desde `debug`.
+- **Producción**: se muestran desde `info` en adelante (se omiten `http` y `debug`, para no generar ruido).
+
+### Persistencia y rotación
+
+Los niveles `error` y `fatal` se guardan además en archivos dentro de `logs/`, rotados por día (`logs/errors-YYYY-MM-DD.log`, usando `winston-daily-rotate-file`), conservando un historial de 14 días. La carpeta `logs/` y los archivos `*.log` están en `.gitignore` — no se suben al repositorio porque los genera la aplicación y podrían contener información interna.
+
+### Endpoint de prueba
+
+`GET /loggerTest` dispara los 6 niveles de una sola vez, para verificar rápidamente que la configuración funciona. No es un endpoint de negocio, es una herramienta de diagnóstico. Al probarlo se debería ver: las 6 líneas en la consola del servidor (con color y timestamp), y solo las de `error`/`fatal` reflejadas en `logs/errors-FECHA.log`.
+
 ## Mocking y datos de prueba
 
 El proyecto incluye un router de mocking (`/api/mocks`) para generar datos de prueba sin depender de información cargada a mano. Sigue la misma arquitectura por capas que el resto de la API: los generadores viven en `src/mocks/` (funciones puras, sin tocar la base de datos), `mocksService` los orquesta, y el Controller/Router exponen los endpoints.

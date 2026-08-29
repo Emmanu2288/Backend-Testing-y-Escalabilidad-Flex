@@ -8,6 +8,7 @@ import { ordersService } from './orders.service.js'
 import { deliveriesService } from './deliveries.service.js'
 import { USER_ROLES } from '../constants/index.js'
 import { AppError } from '../errors/AppError.js'
+import logger from '../utils/logger.js'
 
 export const mocksService = {
     getMockUser: (count) => {
@@ -76,6 +77,9 @@ export const mocksService = {
             const createdDelivery = await deliveriesService.createDelivery(mockDelivery)
             createdDeliveries.push(createdDelivery)
         }
+        
+        logger.info(`Datos mock generados: ${createdUsers.length} usuarios, ${createdProducts.length} productos, ${createdOrders.length} pedidos, ${createdDeliveries.length} entregas`)
+
 
         return {
             usersCreated: createdUsers.length,
