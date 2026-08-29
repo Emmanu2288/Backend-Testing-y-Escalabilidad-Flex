@@ -578,6 +578,127 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Errores",
+			"item": [
+				{
+					"name": "1. Usuario inexistente (404 USER_NOT_FOUND)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/000000000000000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"000000000000000000000000"
+							]
+						},
+						"description": "Id con formato válido pero que no existe en la base."
+					},
+					"response": []
+				},
+				{
+					"name": "2. Producto con precio negativo (400 VALIDATION_ERROR)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Producto inválido\",\n  \"descripcion\": \"Test de validación\",\n  \"precio\": -5,\n  \"stock\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Ruta inexistente (404 ROUTE_NOT_FOUND)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ruta-que-no-existe",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ruta-que-no-existe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Cantidad de mocks inválida (400 INVALID_MOCK_AMOUNT)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mocks/generateData",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mocks",
+								"generateData"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"users\": -3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Repartidor con rol incorrecto (400 INVALID_DRIVER_ROLE)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/deliveries",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"deliveries"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pedido\": \"000000000000000000000000\",\n  \"repartidor\": \"000000000000000000000000\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Para reproducir de verdad, reemplazar 'repartidor' por el id de un usuario real con rol cliente (creado con el request 1 de Users), y 'pedido' por un pedido real."
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
