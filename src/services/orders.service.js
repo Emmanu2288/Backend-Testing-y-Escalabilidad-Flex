@@ -1,11 +1,12 @@
 import { ordersRepository } from '../repositories/orders.repository.js'
 import { usersRepository } from '../repositories/users.repository.js'
+import { AppError } from '../errors/AppError.js'
 
 export const ordersService = {
     createOrder: async (orderData) => {
         const cliente = await usersRepository.findById(orderData.cliente)
         if (!cliente) {
-            throw new Error('El cliente indicado no existe')
+            throw new AppError('USER_NOT_FOUND')
         }
 
         const total = orderData.items.reduce((acc, item) => acc + item.cantidad * item.precio, 0)
@@ -17,7 +18,7 @@ export const ordersService = {
     updateOrder: async (id, orderData) => {
         const order = await ordersRepository.findById(id)
         if (!order) {
-            throw new Error('Pedido no encontrado')
+            throw new AppError('ORDER_NOT_FOUND', 'El pedido indicado no existe')
         }
         return await ordersRepository.update(id, orderData)
     },
@@ -25,7 +26,7 @@ export const ordersService = {
     deleteOrder: async (id) => {
         const order = await ordersRepository.findById(id)
         if (!order) {
-            throw new Error('Pedido no encontrado')
+            throw new AppError('ORDER_NOT_FOUND', 'El pedido indicado no existe')
         }
         return await ordersRepository.delete(id)
     },
@@ -37,7 +38,7 @@ export const ordersService = {
     findOrderById: async (id) => {
         const order = await ordersRepository.findById(id)
         if (!order) {
-            throw new Error('Pedido no encontrado')
+            throw new AppError('ORDER_NOT_FOUND', 'El pedido indicado no existe')
         }
         return order
     }

@@ -1,9 +1,10 @@
 import {productsRepository} from "../repositories/products.repository.js";
+import { AppError } from '../errors/AppError.js'
 
 export const productService = {
     createProduct: async (productData) => {
         if (productData.precio <= 0) {
-            throw new Error('El precio debe ser mayor a cero');
+            throw new AppError('VALIDATION_ERROR', 'El precio debe ser mayor a cero');
         }
         return await productsRepository.create(productData);
     },
@@ -11,7 +12,7 @@ export const productService = {
     updateProduct: async (id, productData) => {
         const product = await productsRepository.findById(id);
         if (!product) {
-            throw new Error('Producto no encontrado');
+            throw new AppError('PRODUCT_NOT_FOUND');
         }
         return await productsRepository.update(id, productData);
     },
@@ -19,7 +20,7 @@ export const productService = {
     deleteProduct: async (id) => {
         const product = await productsRepository.findById(id);
         if (!product) {
-            throw new Error('Producto no encontrado');
+            throw new AppError('PRODUCT_NOT_FOUND');
         }
         return await productsRepository.delete(id);
     },
@@ -31,7 +32,7 @@ export const productService = {
     findProductById: async (id) => {
         const product = await productsRepository.findById(id)
                 if (!product) {
-                 throw new Error('Producto no encontrado')
+                 throw new AppError('PRODUCT_NOT_FOUND')
                 }
   return product
     }

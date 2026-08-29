@@ -6,6 +6,8 @@ import mongoose from "mongoose";
 import mocksRoutes from "./routes/mocks.routes.js";
 import ordersRoutes from './routes/orders.routes.js'
 import deliveriesRoutes from './routes/deliveries.routes.js'
+import { routeNotFound } from './middlewares/routeNotFound.js'
+import { errorHandler } from './middlewares/errorHandler.js'
 
 const app = express();
 
@@ -23,6 +25,8 @@ app.use('/api/orders', ordersRoutes)
 app.use('/api/deliveries', deliveriesRoutes)
 app.use("/api/mocks", mocksRoutes);
 
+app.use(routeNotFound)
+app.use(errorHandler)
 
 mongoose.connect(config.mongoUri)
     .then(() => console.log("Conectado a la base de datos"))

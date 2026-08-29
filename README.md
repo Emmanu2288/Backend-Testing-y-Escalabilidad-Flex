@@ -58,6 +58,38 @@ El proyecto tiene 4 entidades: **Products** (independiente) y **Users**, **Order
 
 Estas validaciones de relación viven en los Services (`orders.service.js`, `deliveries.service.js`), que consultan los Repositories de las entidades relacionadas para confirmar que los ids recibidos correspondan a documentos reales.
 
+## Manejo de errores
+
+La API centraliza todos los errores esperados en una capa común, en vez de responderlos manualmente en cada Controller.
+
+- **`src/errors/errorDictionary.js`**: diccionario con todos los errores del dominio (`USER_NOT_FOUND`, `PRODUCT_NOT_FOUND`, `ORDER_NOT_FOUND`, `DELIVERY_NOT_FOUND`, `INVALID_DRIVER_ROLE`, `VALIDATION_ERROR`, `INVALID_MOCK_AMOUNT`, `ROUTE_NOT_FOUND`, `INTERNAL_SERVER_ERROR`), cada uno con su `statusCode` HTTP y su mensaje.
+- **`src/errors/AppError.js`**: clase que extiende `Error`, arma un error a partir de un código del diccionario (opcionalmente con un mensaje más específico).
+- **`src/middlewares/errorHandler.js`**: middleware global (el último que se registra en `app.js`) que recibe cualquier error de la aplicación y arma la respuesta final.
+- **`src/middlewares/routeNotFound.js`**: middleware para rutas que no existen.
+
+Los Services lanzan `AppError` cuando detectan un problema (dato inválido, recurso inexistente, relación inconsistente). Los Controllers ya no deciden códigos HTTP: en el `catch` solo hacen `next(error)`, delegando la respuesta al middleware global.
+
+### Formato de respuesta de error
+
+Toda la API responde los errores esperados con la misma estructura:
+```json
+{
+  "status": "error",
+  "error": "USER_NOT_FOUND",
+  "message": "El usuario solicitado no existe"
+}
+```
+Un error inesperado (no controlado explícitamente) responde `500` con `error: "INTERNAL_SERVER_ERROR"`, sin exponer detalles internos del servidor.
+
+### Cómo probar el comportamiento ante errores
+
+Con el servidor corriendo, algunos casos para probar:
+- `GET /api/users/000000000000000000000000` (id válido pero inexistente) → `404 USER_NOT_FOUND`
+- `POST /api/products` con `"precio": -5` → `400 VALIDATION_ERROR`
+- `POST /api/mocks/generateData` con `"users": -3` → `400 INVALID_MOCK_AMOUNT`
+- `POST /api/deliveries` con un `repartidor` que en realidad tiene rol `cliente` → `400 INVALID_DRIVER_ROLE`
+- Cualquier ruta que no exista, por ejemplo `GET /api/ruta-inexistente` → `404 ROUTE_NOT_FOUND`
+
 ## Mocking y datos de prueba
 
 El proyecto incluye un router de mocking (`/api/mocks`) para generar datos de prueba sin depender de información cargada a mano. Sigue la misma arquitectura por capas que el resto de la API: los generadores viven en `src/mocks/` (funciones puras, sin tocar la base de datos), `mocksService` los orquesta, y el Controller/Router exponen los endpoints.
