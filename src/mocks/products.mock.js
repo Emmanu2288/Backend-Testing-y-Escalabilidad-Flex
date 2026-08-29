@@ -8,10 +8,10 @@ export const generateMockProduct = () => {
     const stockProduct = faker.number.int({ min: 0, max: 100 })
 
     return {
-        name: productName,
-        description: descriptionProduct,
-        price: priceProduct,
-        status: PRODUCT_STATUS.AVAILABLE,
+        nombre: productName,
+        descripcion: descriptionProduct,
+        precio: priceProduct,
+        estado: PRODUCT_STATUS.AVAILABLE,
         stock: stockProduct
     }
 }

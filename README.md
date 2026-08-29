@@ -19,7 +19,9 @@ API de logística construida como proyecto de práctica para el curso de Program
    ```
    npm run dev
    ```
-5. La API queda disponible en `http://localhost:8080/api`, con los endpoints de `/products`, `/users` y `/mocks`.
+5. La API queda disponible en `http://localhost:8080/api`, con los endpoints de `/products`, `/users`, `/orders`, `/deliveries` y `/mocks`.
+
+**Nota sobre idioma:** los identificadores del código (archivos, funciones, variables) están en inglés, como es convención en desarrollo de software. Los datos que expone la API (campos de los modelos, valores de los estados y roles) están en español — por ejemplo, un usuario tiene `nombre`, `email` y `rol` (`cliente`, `repartidor` o `admin`), y un producto tiene `nombre`, `descripcion`, `precio` y `estado`.
 
 Si falta alguna variable de entorno crítica (como `MONGODB_URI`), el servidor no arranca y muestra un error descriptivo en la consola.
 
@@ -45,7 +47,16 @@ Las variables de entorno se centralizan en `src/config/index.js`, que valida al 
 
 ## Constantes de dominio
 
-Los valores fijos del negocio (roles de usuario, estados de producto) están centralizados en `src/constants/index.js` como objetos `Object.freeze`, para evitar strings sueltos repetidos por el código y reducir errores de tipeo.
+Los valores fijos del negocio (roles de usuario, estados de producto, estados de pedido, estados y prioridad de entrega) están centralizados en `src/constants/index.js` como objetos `Object.freeze`, para evitar strings sueltos repetidos por el código y reducir errores de tipeo.
+
+## Entidades y relaciones
+
+El proyecto tiene 4 entidades: **Products** (independiente) y **Users**, **Orders** y **Deliveries** (relacionadas entre sí):
+
+- Un **Order** (pedido) pertenece a un `cliente`, que es la referencia (`ObjectId`) a un `User` con rol `cliente`. El `total` se calcula en el Service a partir de los `items` (no se confía en el valor que mande el cliente HTTP).
+- Una **Delivery** (entrega) referencia a un `pedido` (`Order`) y a un `repartidor` (`User` con rol `repartidor`). El Service valida que ambos existan y que el usuario asignado tenga efectivamente el rol de repartidor antes de crear la entrega.
+
+Estas validaciones de relación viven en los Services (`orders.service.js`, `deliveries.service.js`), que consultan los Repositories de las entidades relacionadas para confirmar que los ids recibidos correspondan a documentos reales.
 
 ## Mocking y datos de prueba
 
@@ -55,29 +66,31 @@ Los datos falsos se generan con [Faker](https://fakerjs.dev/) (nombres, emails y
 
 ### Endpoints disponibles
 
-**`GET /api/mocks/mockingusers?count=N`**
-Devuelve `N` usuarios falsos (por defecto 10 si no se especifica `count`) **sin guardarlos en la base de datos**. Sirve para ver rápidamente cómo se verían los datos, sin efectos secundarios.
-
-**`GET /api/mocks/mockingproducts?count=N`**
-Igual que el anterior, pero para productos.
+**`GET /api/mocks/mockingusers?count=N`** / **`mockingproducts`** / **`mockingorders`** / **`mockingdeliveries`**
+Devuelven `N` registros falsos de cada entidad (por defecto 10 si no se especifica `count`) **sin guardarlos en la base de datos**. Como los pedidos y entregas de "solo lectura" no existen realmente en Mongo, sus relaciones (`cliente`, `pedido`, `repartidor`) se completan con ids con formato válido pero inventados — sirven para ver la forma del dato, no para usarse como referencias reales.
 
 **`POST /api/mocks/generateData`**
-Genera e **inserta** en MongoDB la cantidad de usuarios y productos indicada en el body:
+Genera e **inserta** en MongoDB la cantidad indicada de cada entidad, respetando las relaciones entre ellas:
 ```json
 {
   "users": 10,
-  "products": 10
+  "products": 10,
+  "orders": 5,
+  "deliveries": 3
 }
 ```
-Cada usuario mock se crea a través de `usersService.createUser`, por lo que pasa por las mismas validaciones y el mismo hasheo de contraseña (con `bcrypt`) que un usuario real. Responde con la cantidad de registros creados, por ejemplo:
+El orden de generación importa: primero se crean los usuarios (1 de cada 3 con rol `repartidor`, el resto `cliente`), después los pedidos (cada uno asignado a un cliente recién creado), y por último las entregas (cada una asignada a un pedido y a un repartidor recién creados). Si se piden `orders` o `deliveries` sin los usuarios/pedidos necesarios para relacionarlos, la API responde `400` con un mensaje descriptivo en vez de crear datos inconsistentes.
+
+Cada registro pasa por su Service correspondiente (`usersService.createUser`, `ordersService.createOrder`, etc.), por lo que se aplican las mismas validaciones y reglas de negocio que un dato real (hasheo de contraseña, cálculo de `total`, coherencia de rol del repartidor). Responde con la cantidad de registros creados:
 ```json
 {
   "usersCreated": 10,
-  "productsCreated": 10
+  "productsCreated": 10,
+  "ordersCreated": 5,
+  "deliveriesCreated": 3
 }
 ```
-Si `users` y `products` no son números, son negativos, o ambos son `0`, la API responde `400` con un mensaje descriptivo.
 
 ### Cómo probarlo
 
-Con el servidor corriendo (`npm run dev`), probar los tres endpoints desde Postman (o cualquier cliente HTTP) apuntando a `http://localhost:8080/api/mocks/...`. Para limpiar los datos de prueba generados, se pueden eliminar los documentos directamente desde MongoDB Compass, en las colecciones `users` y `products` de la base `shipnow`.
+Con el servidor corriendo (`npm run dev`), probar los endpoints desde Postman (la colección incluida en `postman/` ya tiene las carpetas Products, Users, Orders, Deliveries y Mocks) apuntando a `http://localhost:8080/api/mocks/...`. Para limpiar los datos de prueba generados, se pueden eliminar los documentos directamente desde MongoDB Compass, en las colecciones `users`, `products`, `orders` y `deliveries` de la base `shipnow`.

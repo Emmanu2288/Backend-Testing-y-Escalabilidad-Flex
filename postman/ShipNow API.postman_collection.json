@@ -1,313 +1,583 @@
 {
-  "info": {
-    "_postman_id": "9aef106b-d68d-4468-b4de-252f3cc03b63",
-    "name": "ShipNow API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "52026757",
-    "_collection_link": "https://go.postman.co/collection/52026757-9aef106b-d68d-4468-b4de-252f3cc03b63?source=collection_link"
-  },
-  "item": [
-    {
-      "name": "Products",
-      "item": [
-        {
-          "name": "1. Crear producto",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Zapatillas running\",\r\n  \"description\": \"Zapatillas para correr, talle 42\",\r\n  \"price\": 15000,\r\n  \"stock\": 10\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/products",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "products"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "2. Obtener todos los productos",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/products",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "products"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "3. Obtener producto por ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/products/6a7735a7bbea25fc9eaf5c6e",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "products",
-                "6a7735a7bbea25fc9eaf5c6e"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "4. Actualizar producto",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Zapatillas running\",\r\n  \"description\": \"Zapatillas para correr, talle 40\",\r\n  \"price\": 85000,\r\n  \"stock\": 80\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/products/6a7735a7bbea25fc9eaf5c6e",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "products",
-                "6a7735a7bbea25fc9eaf5c6e"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "5. Eliminar producto",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/products/6a7735a7bbea25fc9eaf5c6e",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "products",
-                "6a7735a7bbea25fc9eaf5c6e"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Users",
-      "item": [
-        {
-          "name": "1. Crear Usuario",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Pepe Pérez\",\r\n  \"email\": \"pepe@example.com\",\r\n  \"password\": \"12345678\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/users",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "users"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "2. Obtener todos los usuarios",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/users",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "users"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "3. Obtener usuario por ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/users/6a89aca6fed6a6b7ed59f425",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "users",
-                "6a89aca6fed6a6b7ed59f425"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "4. Actualizar usuario",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Juancito Pérez\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/users/6a89aca6fed6a6b7ed59f425",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "users",
-                "6a89aca6fed6a6b7ed59f425"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "5. Eliminar usuario",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/users/6a89aca6fed6a6b7ed59f425",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "users",
-                "6a89aca6fed6a6b7ed59f425"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Mocks",
-      "item": [
-        {
-          "name": "1. Obtener usuarios falsos",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/mocks/mockingusers?count=10",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "mocks",
-                "mockingusers"
-              ],
-              "query": [
-                {
-                  "key": "count",
-                  "value": "10"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "2. Obtener productos falsos",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/mocks/mockingproducts?count=10",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "mocks",
-                "mockingproducts"
-              ],
-              "query": [
-                {
-                  "key": "count",
-                  "value": "10"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "3. Generar datos de prueba",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"users\": 10,\r\n  \"products\": 10\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/mocks/generateData",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "mocks",
-                "generateData"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    }
-  ]
+	"info": {
+		"_postman_id": "9aef106b-d68d-4468-b4de-252f3cc03b63",
+		"name": "ShipNow API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "52026757",
+		"_collection_link": "https://go.postman.co/collection/52026757-9aef106b-d68d-4468-b4de-252f3cc03b63?source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "1. Crear producto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Zapatillas running\",\n  \"descripcion\": \"Zapatillas para correr, talle 42\",\n  \"precio\": 15000,\n  \"stock\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Obtener todos los productos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Obtener producto por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/6a7735a7bbea25fc9eaf5c6e",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"6a7735a7bbea25fc9eaf5c6e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Actualizar producto",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Zapatillas running\",\n  \"descripcion\": \"Zapatillas para correr, talle 40\",\n  \"precio\": 85000,\n  \"stock\": 80\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/6a7735a7bbea25fc9eaf5c6e",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"6a7735a7bbea25fc9eaf5c6e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Eliminar producto",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/6a7735a7bbea25fc9eaf5c6e",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"6a7735a7bbea25fc9eaf5c6e"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "1. Crear Usuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Pepe Pérez\",\n  \"email\": \"pepe@example.com\",\n  \"password\": \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Obtener todos los usuarios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Obtener usuario por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/6a89aca6fed6a6b7ed59f425",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"6a89aca6fed6a6b7ed59f425"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Actualizar usuario",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Juancito Pérez\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/6a89aca6fed6a6b7ed59f425",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"6a89aca6fed6a6b7ed59f425"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Eliminar usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/6a89aca6fed6a6b7ed59f425",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"6a89aca6fed6a6b7ed59f425"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "1. Crear pedido",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cliente\": \"6a7735a7bbea25fc9eaf5c03\",\n  \"items\": [\n    {\n      \"nombre\": \"Caja mediana\",\n      \"cantidad\": 2,\n      \"precio\": 1500\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Obtener todos los pedidos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Obtener pedido por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders/6a7735a7bbea25fc9eaf5c01",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders",
+								"6a7735a7bbea25fc9eaf5c01"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Actualizar pedido",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders/6a7735a7bbea25fc9eaf5c01",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders",
+								"6a7735a7bbea25fc9eaf5c01"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"estado\": \"asignado\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Eliminar pedido",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders/6a7735a7bbea25fc9eaf5c01",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders",
+								"6a7735a7bbea25fc9eaf5c01"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Deliveries",
+			"item": [
+				{
+					"name": "1. Crear entrega",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/deliveries",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"deliveries"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pedido\": \"6a7735a7bbea25fc9eaf5c01\",\n  \"repartidor\": \"6a7735a7bbea25fc9eaf5c04\",\n  \"prioridad\": \"alta\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Obtener todas las entregas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/deliveries",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"deliveries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Obtener entrega por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/deliveries/6a7735a7bbea25fc9eaf5c02",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"deliveries",
+								"6a7735a7bbea25fc9eaf5c02"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Actualizar entrega",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/deliveries/6a7735a7bbea25fc9eaf5c02",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"deliveries",
+								"6a7735a7bbea25fc9eaf5c02"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"estado\": \"en_transito\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Eliminar entrega",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/deliveries/6a7735a7bbea25fc9eaf5c02",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"deliveries",
+								"6a7735a7bbea25fc9eaf5c02"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Mocks",
+			"item": [
+				{
+					"name": "1. Obtener usuarios falsos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mocks/mockingusers?count=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mocks",
+								"mockingusers"
+							],
+							"query": [
+								{
+									"key": "count",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Obtener productos falsos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mocks/mockingproducts?count=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mocks",
+								"mockingproducts"
+							],
+							"query": [
+								{
+									"key": "count",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Generar datos de prueba",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"users\": 6,\n  \"products\": 4,\n  \"orders\": 4,\n  \"deliveries\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/mocks/generateData",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mocks",
+								"generateData"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Obtener pedidos falsos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mocks/mockingorders?count=5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mocks",
+								"mockingorders"
+							],
+							"query": [
+								{
+									"key": "count",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Obtener entregas falsas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mocks/mockingdeliveries?count=5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mocks",
+								"mockingdeliveries"
+							],
+							"query": [
+								{
+									"key": "count",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
 }

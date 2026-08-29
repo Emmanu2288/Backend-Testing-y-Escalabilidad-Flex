@@ -2,7 +2,7 @@ import {productsRepository} from "../repositories/products.repository.js";
 
 export const productService = {
     createProduct: async (productData) => {
-        if (productData.price <= 0) {
+        if (productData.precio <= 0) {
             throw new Error('El precio debe ser mayor a cero');
         }
         return await productsRepository.create(productData);

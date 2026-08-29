@@ -2,19 +2,19 @@ import mongoose from "mongoose";
 import { PRODUCT_STATUS } from "../constants/index.js";
 
 const productSchema = new mongoose.Schema({
-    name: {
+    nombre: {
         type: String,
         required: true
     },
-    description: {
+    descripcion: {
         type: String,
         required: true
     },
-    price: {
+    precio: {
         type: Number,
         required: true
     },
-    status: {
+    estado: {
         type: String,
         enum: Object.values(PRODUCT_STATUS),
         default: PRODUCT_STATUS.AVAILABLE
