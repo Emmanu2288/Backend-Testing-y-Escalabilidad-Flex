@@ -37,18 +37,45 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     get:
-      summary: Obtener todos los pedidos
+      summary: Obtener todos los pedidos (paginado)
       tags:
         - Orders
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Número de página (por defecto 1)
+          schema:
+            type: integer
+            example: 1
+        - name: limit
+          in: query
+          required: false
+          description: Cantidad de resultados por página (por defecto 10)
+          schema:
+            type: integer
+            example: 10
       responses:
         "200":
           description: Lista de pedidos obtenida correctamente
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pedido'
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pedido'
+                  total:
+                    type: number
+                    example: 20
+                  page:
+                    type: number
+                    example: 1
+                  totalPages:
+                    type: number
+                    example: 2
 
   /api/orders/{id}:
     get:

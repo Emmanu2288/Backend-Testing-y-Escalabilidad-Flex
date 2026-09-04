@@ -37,10 +37,13 @@ describe('Users API', () => {
         expect(response.body.error).to.equal('VALIDATION_ERROR')
     })
 
-    it('debería obtener la lista de usuarios', async () => {
+    it('debería obtener la lista de usuarios paginada', async () => {
         const response = await request(app).get('/api/users')
 
         expect(response.status).to.equal(200)
-        expect(response.body).to.be.an('array')
+        expect(response.body).to.have.property('users')
+        expect(response.body.users).to.be.an('array')
+        expect(response.body).to.have.property('total')
+        expect(response.body).to.have.property('totalPages')
     })
 })

@@ -46,18 +46,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     get:
-      summary: Obtener todas las entregas
+      summary: Obtener todas las entregas (paginado)
       tags:
         - Deliveries
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Número de página (por defecto 1)
+          schema:
+            type: integer
+            example: 1
+        - name: limit
+          in: query
+          required: false
+          description: Cantidad de resultados por página (por defecto 10)
+          schema:
+            type: integer
+            example: 10
       responses:
         "200":
           description: Lista de entregas obtenida correctamente
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Entrega'
+                type: object
+                properties:
+                  deliveries:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Entrega'
+                  total:
+                    type: integer
+                    description: Total de entregas
+                    example: 100
+                  page:
+                    type: integer
+                    description: Página actual
+                    example: 1
+                  totalPages:
+                    type: integer
+                    description: Total de páginas
+                    example: 10
 
   /api/deliveries/{id}:
     get:

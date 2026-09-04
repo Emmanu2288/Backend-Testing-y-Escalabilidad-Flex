@@ -97,10 +97,13 @@ describe('Orders API', () => {
         expect(response.body.estado).to.equal('asignado')
     })
 
-    it('debería obtener la lista de pedidos', async () => {
+    it('debería obtener la lista de pedidos paginada', async () => {
         const response = await request(app).get('/api/orders')
 
         expect(response.status).to.equal(200)
-        expect(response.body).to.be.an('array')
+        expect(response.body).to.have.property('orders')
+        expect(response.body.orders).to.be.an('array')
+        expect(response.body).to.have.property('total')
+        expect(response.body).to.have.property('totalPages')
     })
 })

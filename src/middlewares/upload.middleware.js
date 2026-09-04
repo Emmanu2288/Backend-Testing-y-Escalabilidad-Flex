@@ -1,5 +1,13 @@
+import fs from 'fs'
 import multer from 'multer'
 import path from 'path'
+
+const uploadFolders = [
+    'uploads/documents',
+    'uploads/proofs',
+    'uploads/licenses'
+]
+uploadFolders.forEach((folder) => fs.mkdirSync(folder, { recursive: true }))
 
 const allowedMimeTypes = [
     'application/pdf',

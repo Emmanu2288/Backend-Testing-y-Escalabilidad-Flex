@@ -12,5 +12,7 @@ requieredEnvVars.forEach((envVar) => {
 export const config = {
     port: process.env.PORT || 8080,
     mongoUri: process.env.MONGODB_URI,
-    nodeEnv: process.env.NODE_ENV || 'development'
+    nodeEnv: process.env.NODE_ENV || 'development',
+    logLevel: process.env.LOG_LEVEL,
+    clientUrl: process.env.CLIENT_URL || 'http://localhost:5173'
 }

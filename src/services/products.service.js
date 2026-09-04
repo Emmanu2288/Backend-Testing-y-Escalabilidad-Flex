@@ -25,8 +25,8 @@ export const productService = {
         return await productsRepository.delete(id);
     },
 
-    findAllProducts: async () => {
-  return await productsRepository.findAll()
+    findAllProducts: async (page = 1, limit = 10) => {
+  return await productsRepository.findAll(page, limit)
 },
 
     findProductById: async (id) => {

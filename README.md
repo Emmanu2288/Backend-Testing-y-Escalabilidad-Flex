@@ -14,7 +14,10 @@ API de logística construida como proyecto de práctica para el curso de Program
    PORT=8080
    MONGODB_URI=mongodb://localhost:27017/shipnow
    NODE_ENV=development
+   LOG_LEVEL=
+   CLIENT_URL=http://localhost:5173
    ```
+   `LOG_LEVEL` es opcional — si no se define, el nivel del logger se calcula solo según `NODE_ENV` (`debug` en desarrollo, `info` en producción). `CLIENT_URL` se usa para configurar CORS (qué origen tiene permitido consumir la API); si no se define, cae en `http://localhost:5173` por defecto.
 4. Levantar el servidor en modo desarrollo (se reinicia solo ante cada cambio):
    ```
    npm run dev
@@ -245,3 +248,53 @@ Cada registro pasa por su Service correspondiente (`usersService.createUser`, `o
 ### Cómo probarlo
 
 Con el servidor corriendo (`npm run dev`), probar los endpoints desde Postman (la colección incluida en `postman/` ya tiene las carpetas Products, Users, Orders, Deliveries y Mocks) apuntando a `http://localhost:8080/api/mocks/...`. Para limpiar los datos de prueba generados, se pueden eliminar los documentos directamente desde MongoDB Compass, en las colecciones `users`, `products`, `orders` y `deliveries` de la base `shipnow`.
+
+## Producción y Docker
+
+### Health check
+
+`GET /health` responde sin necesidad de tocar la base de datos ni ninguna otra capa — sirve para que una herramienta de monitoreo o el propio Docker sepan rápidamente si la API está viva:
+```json
+{
+  "status": "ok",
+  "environment": "production",
+  "uptime": 123.45,
+  "timestamp": "2026-01-01T00:00:00.000Z"
+}
+```
+No expone información sensible (nada de credenciales, rutas internas o detalles de conexión).
+
+### Endpoints internos según el entorno
+
+`/api/mocks` y `/api/loggerTest` son herramientas de desarrollo — generan datos falsos o disparan logs de prueba, no tienen valor para un cliente real de la API. Por eso, **solo están disponibles cuando `NODE_ENV !== 'production'`**; en producción, esas rutas responden `404 ROUTE_NOT_FOUND` como cualquier ruta inexistente. `/api/docs` (Swagger), en cambio, **queda disponible en todos los entornos**, porque documentar la API no representa un riesgo y es útil para quien la consuma en cualquier momento.
+
+### Variables de entorno
+
+El proyecto no implementa autenticación todavía, por lo que no usa `JWT_SECRET` — si en algún momento se agrega login, ahí sí correspondería sumarlo a `.env`/`.env.example`. El resto de las variables (`PORT`, `MONGODB_URI`, `NODE_ENV`, `LOG_LEVEL`, `CLIENT_URL`) están detalladas más arriba, en "Cómo correr el proyecto localmente".
+
+### Construir la imagen
+
+```
+docker build -t shipnow-api .
+```
+Usa `node:22-alpine` como base, instala solo las dependencias de producción (`npm install --omit=dev`, sin Mocha/Chai/Supertest/nodemon) y expone el puerto `8080`.
+
+### Ejecutar el contenedor
+
+```
+docker run -d -p 8080:8080 --env-file .env shipnow-api
+```
+La opción `-p 8080:8080` conecta el puerto `8080` del contenedor con el `8080` de tu máquina — la API queda en `http://localhost:8080`, igual que en desarrollo local.
+
+**Importante si MongoDB corre en tu propia máquina** (no en Atlas): dentro del contenedor, `localhost` apunta al contenedor mismo, no a tu PC. Hay que usar `host.docker.internal` en el `MONGODB_URI` en vez de `localhost`, por ejemplo:
+```
+MONGODB_URI=mongodb://host.docker.internal:27017/shipnow
+```
+
+### Qué no viaja a la imagen
+
+El `.dockerignore` excluye `node_modules`, `.env`, `.env.test`, `.git`, `logs`, `uploads`, `coverage`, `npm-debug.log` y `tests` — mismo criterio que `.gitignore`, pero aplicado a lo que Docker copia. Las carpetas de `uploads/` (`documents`, `proofs`, `licenses`) se recrean solas al arrancar la app (ver `src/middlewares/upload.middleware.js`), así que no hace falta que viajen vacías en la imagen.
+
+### Logs y uploads dentro de un contenedor
+
+Los archivos que la app genera en tiempo de ejecución (logs rotados, documentos subidos) viven **dentro del contenedor**, no son persistentes: si el contenedor se elimina, se pierden. Para este proyecto alcanza con saber esto — en un entorno productivo real, esos archivos se guardarían con volúmenes de Docker o un servicio externo de almacenamiento, algo fuera del alcance de esta etapa.

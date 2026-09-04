@@ -38,18 +38,49 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     get:
-      summary: Obtener todos los usuarios
+      summary: Obtener todos los usuarios (paginado)
       tags:
         - Users
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Número de página (por defecto 1)
+          schema:
+            type: integer
+            example: 1
+        - name: limit
+          in: query
+          required: false
+          description: Cantidad de resultados por página (por defecto 10)
+          schema:
+            type: integer
+            example: 10
       responses:
         "200":
           description: Lista de usuarios obtenida correctamente
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Usuario'
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Usuario'
+                  total:
+                    type: integer
+                    description: Total de usuarios
+                    example: 100
+                  page:
+                    type: integer
+                    description: Página actual
+                    example: 1
+                  totalPages:
+                    type: integer
+                    description: Total de páginas
+                    example: 10
+
   /api/users/{id}:
     get:
       summary: Obtener un usuario por ID

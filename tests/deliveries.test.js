@@ -81,11 +81,14 @@ describe('Deliveries API', () => {
         expect(response.body.error).to.equal('ORDER_NOT_FOUND')
     })
 
-    it('debería obtener la lista de entregas', async () => {
+    it('debería obtener la lista de entregas paginada', async () => {
         const response = await request(app).get('/api/deliveries')
 
         expect(response.status).to.equal(200)
-        expect(response.body).to.be.an('array')
+        expect(response.body).to.have.property('deliveries')
+        expect(response.body.deliveries).to.be.an('array')
+        expect(response.body).to.have.property('total')
+        expect(response.body).to.have.property('totalPages')
     })
 
     it('debería responder 404 si la entrega consultada no existe', async () => {

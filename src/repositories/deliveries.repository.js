@@ -4,8 +4,10 @@ export const deliveriesRepository = {
     create: async (deliveryData) => {
         return await Delivery.create(deliveryData)
     },
-    findAll: async () => {
-        return await Delivery.find()
+    findAll: async (page = 1, limit = 10) => {
+        const deliveries = await Delivery.find().skip((page - 1) * limit).limit(limit)
+        const total = await Delivery.countDocuments()
+        return { deliveries, total, page, totalPages: Math.ceil(total / limit) }
     },
     findById: async (id) => {
         return await Delivery.findById(id)

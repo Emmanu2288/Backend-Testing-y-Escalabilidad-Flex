@@ -39,8 +39,8 @@ export const ordersService = {
         return await ordersRepository.delete(id)
     },
 
-    findAllOrders: async () => {
-        return await ordersRepository.findAll()
+    findAllOrders: async (page = 1, limit = 10) => {
+        return await ordersRepository.findAll(page, limit)
     },
 
     findOrderById: async (id) => {

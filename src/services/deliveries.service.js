@@ -40,8 +40,8 @@ export const deliveriesService = {
         return await deliveriesRepository.delete(id)
     },
 
-    findAllDeliveries: async () => {
-        return await deliveriesRepository.findAll()
+    findAllDeliveries: async (page = 1, limit = 10) => {
+        return await deliveriesRepository.findAll(page, limit)
     },
 
     findDeliveryById: async (id) => {

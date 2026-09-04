@@ -44,9 +44,11 @@ const errorFileTransport = new DailyRotateFile({
     format: fileFormat
 })
 
+const defaultLevel = config.nodeEnv === 'production' ? 'info' : 'debug'
+
 const logger = winston.createLogger({
     levels: customLevels.levels,
-    level: config.nodeEnv === 'production' ? 'info' : 'debug',
+    level: config.logLevel || defaultLevel,
     transports: [
         new winston.transports.Console({ format: consoleFormat }),
         errorFileTransport

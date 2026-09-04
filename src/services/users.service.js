@@ -1,9 +1,9 @@
 import {usersRepository} from "../repositories/users.repository.js";
 import bcrypt from 'bcrypt'
-import fs from 'fs/promises'
 import { AppError } from '../errors/AppError.js'
 import { DOCUMENT_TYPES } from "../constants/index.js";
 import logger from '../utils/logger.js'
+import fs from 'fs/promises'
 
 export const usersService = {
     createUser: async (userData) => {
@@ -31,8 +31,8 @@ export const usersService = {
         return await usersRepository.delete(id);
     },
 
-    findAllUsers: async () => {
-        return await usersRepository.findAll();
+    findAllUsers: async (page = 1, limit = 10) => {
+        return await usersRepository.findAll(page, limit);
     },
 
     findUserById: async (id) => {

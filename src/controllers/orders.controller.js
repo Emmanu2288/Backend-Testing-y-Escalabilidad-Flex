@@ -11,7 +11,9 @@ export const createOrder = async (req, res, next) => {
 
 export const getAllOrders = async (req, res, next) => {
     try {
-        const orders = await ordersService.findAllOrders()
+        const page = Number(req.query.page) || 1
+        const limit = Number(req.query.limit) || 10
+        const orders = await ordersService.findAllOrders(page, limit)
         res.status(200).json(orders)
     } catch (error) {
         next(error)
