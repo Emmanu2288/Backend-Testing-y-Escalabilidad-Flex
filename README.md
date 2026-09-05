@@ -50,7 +50,7 @@ Las variables de entorno se centralizan en `src/config/index.js`, que valida al 
 
 ## Constantes de dominio
 
-Los valores fijos del negocio (roles de usuario, estados de producto, estados de pedido, estados y prioridad de entrega) están centralizados en `src/constants/index.js` como objetos `Object.freeze`, para evitar strings sueltos repetidos por el código y reducir errores de tipeo.
+Los valores fijos del negocio (roles de usuario, estados de producto, estados de pedido, estados y prioridad de entrega, tipos de documento) están centralizados en `src/constants/index.js` como objetos `Object.freeze`, para evitar strings sueltos repetidos por el código y reducir errores de tipeo.
 
 ## Entidades y relaciones
 
@@ -60,6 +60,8 @@ El proyecto tiene 4 entidades: **Products** (independiente) y **Users**, **Order
 - Una **Delivery** (entrega) referencia a un `pedido` (`Order`) y a un `repartidor` (`User` con rol `repartidor`). El Service valida que ambos existan y que el usuario asignado tenga efectivamente el rol de repartidor antes de crear la entrega.
 
 Estas validaciones de relación viven en los Services (`orders.service.js`, `deliveries.service.js`), que consultan los Repositories de las entidades relacionadas para confirmar que los ids recibidos correspondan a documentos reales.
+
+Además, `User` tiene un array `documents` y `Order` tiene un campo `proof`, ambos con los metadatos de archivos subidos vía Multer (ver "Carga de archivos" más abajo).
 
 ## Performance: paginación en los listados
 
@@ -197,7 +199,7 @@ Desde ahí se puede ver cada endpoint agrupado por módulo, y **probarlo directa
 
 La configuración vive separada de las rutas, en `src/docs/`:
 - `swagger.config.js`: configuración general (info de la API, servidor, dónde buscar la documentación).
-- `schemas.yaml`: schemas reutilizables — `Usuario`, `Producto`, `Pedido`, `ItemPedido`, `Entrega`, `ErrorResponse`, `MessageResponse`.
+- `schemas.yaml`: schemas reutilizables — `Usuario`, `Producto`, `Pedido`, `ItemPedido`, `Entrega`, `Documento`, `Comprobante`, `ErrorResponse`, `MessageResponse`.
 - `users.yaml`, `products.yaml`, `orders.yaml`, `deliveries.yaml`: los endpoints CRUD de cada entidad (incluida la paginación del listado), agrupados con el tag correspondiente (`Users`, `Products`, `Orders`, `Deliveries`). `users.yaml` y `orders.yaml` además documentan sus endpoints de carga de archivos (`/documents` y `/proof`).
 - `mocks.yaml`: los 5 endpoints del módulo de mocking, aclarando cuáles no guardan datos (`mockingusers`, `mockingproducts`, `mockingorders`, `mockingdeliveries`) y cuál sí inserta en MongoDB (`generateData`).
 - `logger.yaml`: el endpoint `/api/loggerTest`, aclarando que es una herramienta de diagnóstico y no una funcionalidad de negocio.
@@ -226,6 +228,8 @@ De más grave a menos grave: `fatal`, `error`, `warning`, `info`, `http`, `debug
 Controlado por `NODE_ENV` (ya validado en `src/config/index.js`):
 - **Desarrollo**: se muestran todos los niveles, desde `debug`.
 - **Producción**: se muestran desde `info` en adelante (se omiten `http` y `debug`, para no generar ruido).
+
+Este comportamiento por defecto se puede pisar manualmente con la variable de entorno opcional `LOG_LEVEL` (por ejemplo, `LOG_LEVEL=warning` para ver solo advertencias y errores, sin importar el `NODE_ENV`).
 
 ### Persistencia y rotación
 
