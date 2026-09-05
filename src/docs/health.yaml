@@ -1,0 +1,30 @@
+paths:
+  /health:
+    get:
+      summary: Verificar que la API está activa
+      description: >
+        Endpoint de health check para monitoreo (útil también dentro de Docker). No consulta la
+        base de datos ni ninguna otra capa, y no expone información sensible.
+      tags:
+        - Health
+      responses:
+        "200":
+          description: La API está activa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  environment:
+                    type: string
+                    example: development
+                  uptime:
+                    type: number
+                    description: Segundos que lleva corriendo el proceso
+                    example: 123.45
+                  timestamp:
+                    type: string
+                    format: date-time

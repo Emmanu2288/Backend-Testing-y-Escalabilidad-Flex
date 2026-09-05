@@ -1,6 +1,38 @@
 # ShipNow API
 
-API de logística construida como proyecto de práctica para el curso de Programación Backend III: Testing y Escalabilidad Backend. Implementa una arquitectura por capas (Router → Controller → Service → Repository → Model) sobre Node.js, Express y MongoDB.
+API de logística construida como proyecto de práctica para el curso de Programación Backend III: Testing y Escalabilidad Backend. Gestiona usuarios, productos, pedidos y entregas, con generación de datos de prueba, manejo centralizado de errores, logging, documentación interactiva, testing automatizado, carga de archivos y una imagen Docker lista para ejecutarse en cualquier entorno.
+
+## Tecnologías
+
+- **Node.js** + **Express** — servidor y ruteo.
+- **MongoDB** + **Mongoose** — base de datos y modelado de datos.
+- **Winston** + **winston-daily-rotate-file** — logging estructurado con rotación de archivos.
+- **Swagger** (`swagger-jsdoc` + `swagger-ui-express`) — documentación interactiva de la API.
+- **Multer** — carga de archivos (`multipart/form-data`).
+- **Mocha** + **Chai** + **Supertest** — testing funcional automatizado.
+- **Faker** — generación de datos de prueba realistas para el módulo de mocks.
+- **bcrypt** — hasheo de contraseñas.
+- **Helmet** + **cors** — cabeceras de seguridad básicas y control de origen.
+- **Docker** — contenerización de la API.
+
+## Arquitectura general
+
+Arquitectura por capas (Router → Controller → Service → Repository → Model), detallada en la sección "Arquitectura" más abajo. Cada entidad (Products, Users, Orders, Deliveries) sigue el mismo flujo, y módulos transversales (errores, logging, mocks, documentación, archivos) se integran sin romper esa separación.
+
+## Endpoints principales
+
+La referencia completa y siempre actualizada está en Swagger (`/api/docs`, ver más abajo). Como resumen:
+
+| Base | Métodos | Descripción |
+|---|---|---|
+| `/api/products` | GET, POST, GET/:id, PUT/:id, DELETE/:id | CRUD de productos (paginado en el listado) |
+| `/api/users` | GET, POST, GET/:id, PUT/:id, DELETE/:id, POST/:id/documents | CRUD de usuarios + carga de documentos |
+| `/api/orders` | GET, POST, GET/:id, PUT/:id, DELETE/:id, POST/:id/proof | CRUD de pedidos + carga de comprobante |
+| `/api/deliveries` | GET, POST, GET/:id, PUT/:id, DELETE/:id | CRUD de entregas (paginado en el listado) |
+| `/api/mocks` | GET (mockingusers/products/orders/deliveries), POST (generateData) | Generación de datos de prueba |
+| `/api/loggerTest` | GET | Prueba de los 6 niveles del logger (solo fuera de producción) |
+| `/api/docs` | GET | Documentación interactiva (Swagger UI) |
+| `/health` | GET | Health check |
 
 ## Cómo correr el proyecto localmente
 
