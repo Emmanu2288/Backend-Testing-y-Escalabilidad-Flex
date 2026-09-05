@@ -22,7 +22,7 @@ API de logística construida como proyecto de práctica para el curso de Program
    ```
    npm run dev
    ```
-5. La API queda disponible en `http://localhost:8080/api`, con los endpoints de `/products`, `/users`, `/orders`, `/deliveries` y `/mocks`.
+5. La API queda disponible en `http://localhost:8080/api`, con los endpoints de `/products`, `/users`, `/orders`, `/deliveries` y `/mocks`. El health check vive fuera de `/api`, en `http://localhost:8080/health`.
 
 **Nota sobre idioma:** los identificadores del código (archivos, funciones, variables) están en inglés, como es convención en desarrollo de software. Los datos que expone la API (campos de los modelos, valores de los estados y roles) están en español — por ejemplo, un usuario tiene `nombre`, `email` y `rol` (`cliente`, `repartidor` o `admin`), y un producto tiene `nombre`, `descripcion`, `precio` y `estado`.
 
@@ -61,11 +61,33 @@ El proyecto tiene 4 entidades: **Products** (independiente) y **Users**, **Order
 
 Estas validaciones de relación viven en los Services (`orders.service.js`, `deliveries.service.js`), que consultan los Repositories de las entidades relacionadas para confirmar que los ids recibidos correspondan a documentos reales.
 
+## Performance: paginación en los listados
+
+Para evitar devolver colecciones completas sin control, los 4 endpoints de listado (`GET /api/products`, `/api/users`, `/api/orders`, `/api/deliveries`) están paginados con `page` y `limit` como query params opcionales:
+```
+GET /api/orders?page=2&limit=10
+```
+- `page` (por defecto `1`): qué página pedir.
+- `limit` (por defecto `10`): cuántos resultados por página.
+
+La respuesta ya no es un array plano, sino un objeto con la página pedida más información de paginación, por ejemplo para `/api/orders`:
+```json
+{
+  "orders": [ /* hasta "limit" pedidos */ ],
+  "total": 137,
+  "page": 2,
+  "totalPages": 14
+}
+```
+(La propiedad con el array cambia de nombre según la entidad: `products`, `users`, `orders` o `deliveries`.) El total se calcula con una consulta `countDocuments()` aparte, y `totalPages` sale de `Math.ceil(total / limit)`.
+
+Esta paginación está documentada en Swagger (los 4 endpoints indican `page`/`limit` como parámetros de query, y la respuesta `200` con la forma exacta de arriba) y cubierta por tests funcionales.
+
 ## Manejo de errores
 
 La API centraliza todos los errores esperados en una capa común, en vez de responderlos manualmente en cada Controller.
 
-- **`src/errors/errorDictionary.js`**: diccionario con todos los errores del dominio (`USER_NOT_FOUND`, `PRODUCT_NOT_FOUND`, `ORDER_NOT_FOUND`, `DELIVERY_NOT_FOUND`, `INVALID_DRIVER_ROLE`, `VALIDATION_ERROR`, `INVALID_MOCK_AMOUNT`, `ROUTE_NOT_FOUND`, `INTERNAL_SERVER_ERROR`), cada uno con su `statusCode` HTTP y su mensaje.
+- **`src/errors/errorDictionary.js`**: diccionario con todos los errores del dominio (`USER_NOT_FOUND`, `PRODUCT_NOT_FOUND`, `ORDER_NOT_FOUND`, `DELIVERY_NOT_FOUND`, `INVALID_DRIVER_ROLE`, `VALIDATION_ERROR`, `INVALID_MOCK_AMOUNT`, `ROUTE_NOT_FOUND`, `FILE_REQUIRED`, `INVALID_FILE_TYPE`, `FILE_TOO_LARGE`, `INVALID_DOCUMENT_TYPE`, `UPLOAD_ERROR`, `INTERNAL_SERVER_ERROR`), cada uno con su `statusCode` HTTP y su mensaje.
 - **`src/errors/AppError.js`**: clase que extiende `Error`, arma un error a partir de un código del diccionario (opcionalmente con un mensaje más específico).
 - **`src/middlewares/errorHandler.js`**: middleware global (el último que se registra en `app.js`) que recibe cualquier error de la aplicación y arma la respuesta final.
 - **`src/middlewares/routeNotFound.js`**: middleware para rutas que no existen.
@@ -145,9 +167,10 @@ Esto corre `mocha` sobre todos los archivos `tests/**/*.test.js`, precargando `t
 
 ### Qué está cubierto
 
-- **`tests/users.test.js`**: crear usuario (éxito), email inválido (400), listar usuarios.
-- **`tests/orders.test.js`**: crear pedido con total calculado (éxito), cliente inexistente (404), pedido sin items (400), obtener por ID (éxito y 404), actualizar estado, listar.
-- **`tests/deliveries.test.js`**: crear entrega (éxito), repartidor con rol incorrecto (400), pedido inexistente (404), listar, entrega inexistente (404).
+- **`tests/users.test.js`**: crear usuario (éxito), email inválido (400), listar usuarios (paginado).
+- **`tests/products.test.js`**: crear producto (éxito), precio inválido (400), listar productos (paginado), producto inexistente (404).
+- **`tests/orders.test.js`**: crear pedido con total calculado (éxito), cliente inexistente (404), pedido sin items (400), obtener por ID (éxito y 404), actualizar estado, listar (paginado).
+- **`tests/deliveries.test.js`**: crear entrega (éxito), repartidor con rol incorrecto (400), pedido inexistente (404), listar (paginado), entrega inexistente (404).
 - **`tests/mocks.test.js`**: generar datos falsos sin guardarlos (éxito), cantidad inválida (400), generar e insertar en MongoDB (éxito).
 - **`tests/logger.test.js`**: endpoint `/api/loggerTest` (éxito) y ruta inexistente (404, coherente con el middleware de errores).
 - **`tests/docs.test.js`**: la ruta de Swagger (`/api/docs`) responde.
@@ -175,7 +198,7 @@ Desde ahí se puede ver cada endpoint agrupado por módulo, y **probarlo directa
 La configuración vive separada de las rutas, en `src/docs/`:
 - `swagger.config.js`: configuración general (info de la API, servidor, dónde buscar la documentación).
 - `schemas.yaml`: schemas reutilizables — `Usuario`, `Producto`, `Pedido`, `ItemPedido`, `Entrega`, `ErrorResponse`, `MessageResponse`.
-- `users.yaml`, `products.yaml`, `orders.yaml`, `deliveries.yaml`: los 5 endpoints CRUD de cada entidad, agrupados con el tag correspondiente (`Users`, `Products`, `Orders`, `Deliveries`).
+- `users.yaml`, `products.yaml`, `orders.yaml`, `deliveries.yaml`: los endpoints CRUD de cada entidad (incluida la paginación del listado), agrupados con el tag correspondiente (`Users`, `Products`, `Orders`, `Deliveries`). `users.yaml` y `orders.yaml` además documentan sus endpoints de carga de archivos (`/documents` y `/proof`).
 - `mocks.yaml`: los 5 endpoints del módulo de mocking, aclarando cuáles no guardan datos (`mockingusers`, `mockingproducts`, `mockingorders`, `mockingdeliveries`) y cuál sí inserta en MongoDB (`generateData`).
 - `logger.yaml`: el endpoint `/api/loggerTest`, aclarando que es una herramienta de diagnóstico y no una funcionalidad de negocio.
 
@@ -247,7 +270,7 @@ Cada registro pasa por su Service correspondiente (`usersService.createUser`, `o
 
 ### Cómo probarlo
 
-Con el servidor corriendo (`npm run dev`), probar los endpoints desde Postman (la colección incluida en `postman/` ya tiene las carpetas Products, Users, Orders, Deliveries y Mocks) apuntando a `http://localhost:8080/api/mocks/...`. Para limpiar los datos de prueba generados, se pueden eliminar los documentos directamente desde MongoDB Compass, en las colecciones `users`, `products`, `orders` y `deliveries` de la base `shipnow`.
+Con el servidor corriendo (`npm run dev`), probar los endpoints desde Postman (la colección incluida en `postman/` tiene una carpeta por módulo: Products, Users, Orders, Deliveries, Mocks, Errores, Logger, Health y Uploads) apuntando a `http://localhost:8080/api/mocks/...`. Para limpiar los datos de prueba generados, se pueden eliminar los documentos directamente desde MongoDB Compass, en las colecciones `users`, `products`, `orders` y `deliveries` de la base `shipnow`.
 
 ## Producción y Docker
 
